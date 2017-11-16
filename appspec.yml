@@ -10,7 +10,7 @@ hooks:
   AfterInstall:
     - location: scripts/afterInstall.sh
       runas: root
-  AppicationStart:
+  ApplicationStart:
     - location: scripts/applicationStart.sh
       runas: root
 permissions:
