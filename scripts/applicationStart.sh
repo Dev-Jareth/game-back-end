@@ -1,2 +1,2 @@
 cd /code
-npm start
+npm start &
