@@ -3,4 +3,4 @@ pwd
 ls
 node -v
 npm -v
-npm start
+npm start & bg
