@@ -13,3 +13,9 @@ hooks:
   AppicationStart:
     - location: scripts/applicationStart.sh
       runas: root
+permissions:
+  - object: /code/scripts
+    owner: root
+    mode: 777
+    type:
+      - directory
