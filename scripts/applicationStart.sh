@@ -1,2 +1,1 @@
-cd /code
-npm start &
+cd . $(dirname $0)/../ & npm start & bg 
