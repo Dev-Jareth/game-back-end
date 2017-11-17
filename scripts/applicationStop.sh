@@ -1,1 +1,1 @@
-pkill node &
+pkill node || true
