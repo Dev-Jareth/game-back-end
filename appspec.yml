@@ -13,9 +13,9 @@ hooks:
   ApplicationStart:
     - location: scripts/applicationStart.sh
       runas: root
-  ApplicationStop:
-    - location: scripts/applicationStop.sh
-      runas: root
+  # ApplicationStop:
+    # - location: scripts/applicationStop.sh
+      # runas: root
 permissions:
   - object: /code/scripts
     owner: root
