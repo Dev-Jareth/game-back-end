@@ -1,1 +1,1 @@
-cd . $(dirname $0)/../ & npm start & bg 
+npm run serve
