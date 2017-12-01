@@ -1,1 +1,2 @@
-pkill node || true
+cd /code
+npm run stop
