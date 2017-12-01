@@ -1,2 +1,2 @@
-cd code
+cd /code
 npm run serve
