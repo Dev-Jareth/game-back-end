@@ -5,7 +5,7 @@ files:
     destination: /code
 hooks:
   ApplicationStop:
-    - location:scripts/applicationStop.sh
+    - location: scripts/applicationStop.sh
       runas: ec2-user
   BeforeInstall:
     - location: scripts/beforeInstall.sh
