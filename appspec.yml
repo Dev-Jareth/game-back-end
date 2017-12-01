@@ -12,7 +12,7 @@ hooks:
       runas: root
   ApplicationStart:
     - location: scripts/applicationStart.sh
-      runas: root
+      runas: ec2-user
 permissions:
   - object: /code/scripts
     owner: root
