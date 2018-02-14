@@ -1,5 +1,6 @@
 import PubSub from 'pubsub-js';
 import jwt from 'jsonwebtoken';
+import WebSocket from 'ws';
 const UNAUTHENTICATED_CLIENTS = []
 const CLIENTS = []
 const onConnect = ws => {
@@ -36,9 +37,15 @@ const onConnect = ws => {
 export default onConnect;
 const requestAuthentication = ws => ws.sendMessage("Request-Authentication")
 const sendMessage = function(name, payload = false) {
-  this.send(JSON.stringify({
-    [name]: payload
-  }))
+  try {
+    if (this.readyState === WebSocket.OPEN)
+      this.send(JSON.stringify({
+        [name]: payload
+      }))
+    else throw new Error(`Not Open (${this.readyState})`)
+  } catch (e) {
+    console.error(`WS Failed to send ""${name}"" message because "${e.message}"`)
+  }
 }
 const handleMessage = message => {
   console.log("WS Message Received")
