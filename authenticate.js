@@ -28,24 +28,10 @@ const users = {
   "xp": 500
 }
 
-const validateUser = (email, password) => email in users && users[email].password == password;
+export const validateUser = (email, password) => email in users && users[email].password == password;
 const getUserByEmail = email => users[email]
-const getUserFacadeByEmail = email => {
+export const getUserFacadeByEmail = email => {
   let b = { ...getUserByEmail(email), password: undefined }
   console.log("Response: ", JSON.stringify(b))
   return b;
-}
-
-export const loginUser = (req, res, next) => {
-
-  let email = req.body.email;
-  let password = req.body.password;
-  if (validateUser(email, password))
-    res.json({
-      success: true,
-      token: JWT.sign(getUserFacadeByEmail(email), process.env.SECRET_KEY, {
-        expiresIn: 3600
-      })
-    });
-  else res.sendStatus(403);
 }
