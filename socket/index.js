@@ -10,6 +10,7 @@ const onConnect = ws => {
   subscribe("Authentication", token => {
     try {
       let user = jwt.verify(token, process.env.SECRET_KEY)
+      ws.hasAuth = true;
       let wsPos = UNAUTHENTICATED_CLIENTS.indexOf(ws)
       CLIENTS.push(UNAUTHENTICATED_CLIENTS.splice(wsPos, 1))
       ws.sendMessage("Authenticated")
@@ -22,7 +23,9 @@ const onConnect = ws => {
   console.log("WS Connected")
   ws.on('message', handleMessage);
   ws.on('close', client => {
-
+    console.log("Closing")
+    if (ws.hasAuth) CLIENTS.splice(CLIENTS.indexOf(ws))
+    else UNAUTHENTICATED_CLIENTS.splice(UNAUTHENTICATED_CLIENTS.indexOf(ws))
   })
   ws.on('error', error => {
     if (error.code !== 'ECONNRESET')
