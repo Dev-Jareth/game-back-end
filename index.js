@@ -5,6 +5,8 @@ import logger from 'morgan';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import http from 'http';
+import { Server } from 'ws'
+import onWsConnect from './socket';
 import api from './api'
 
 var app = express();
@@ -57,9 +59,11 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Create HTTP & WS server.
  */
-var server = http.createServer(app);
+const server = http.createServer(app);
+const wss = new Server({ server, path: "/socket" });
+wss.on('connection', onWsConnect)
 
 /**
  * Listen on provided port, on all network interfaces.
