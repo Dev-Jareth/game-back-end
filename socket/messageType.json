@@ -1,0 +1,15 @@
+{
+    "client":{
+        "requestMessageTypes":"Message-Types",
+        "sendAuth":"Authenticate",
+        "requestPlayerData":"Req-Player-Data",
+        "requestPlayerPosition":"Req-Player-Pos"
+    },
+    "server":{
+        "sendMessageTypes":"Message-Types",
+        "requestAuth":"Request-Authentication",
+        "acceptAuth":"Authenticated",
+        "refuseAuth":"Authentication-Refused"
+    },
+    "unknown":"Unknown-Message"
+}

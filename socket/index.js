@@ -1,22 +1,25 @@
 import PubSub from 'pubsub-js';
 import jwt from 'jsonwebtoken';
 import WebSocket from 'ws';
+import MESSAGE from './messageType';
 const UNAUTHENTICATED_CLIENTS = []
 const CLIENTS = []
+
+
 const onConnect = ws => {
   UNAUTHENTICATED_CLIENTS.push(ws)
 
   ws.sendMessage = sendMessage.bind(ws);
   requestAuthentication(ws)
-  subscribe("Authentication", token => {
+  subscribe(MESSAGE.client.sendAuth, token => {
     try {
       let user = jwt.verify(token, process.env.SECRET_KEY)
       ws.hasAuth = true;
       let wsPos = UNAUTHENTICATED_CLIENTS.indexOf(ws)
       CLIENTS.push(UNAUTHENTICATED_CLIENTS.splice(wsPos, 1))
-      ws.sendMessage("Authenticated")
+      ws.sendMessage(MESSAGE.server.acceptAuth)
     } catch (e) {
-      ws.sendMessage("Authentication-Refused")
+      ws.sendMessage(MESSAGE.server.acceptAuth)
 
     }
 
@@ -35,7 +38,7 @@ const onConnect = ws => {
 
 }
 export default onConnect;
-const requestAuthentication = ws => ws.sendMessage("Request-Authentication")
+const requestAuthentication = ws => ws.sendMessage(MESSAGE.server.requestAuth)
 const sendMessage = function(name, payload = false) {
   try {
     if (this.readyState === WebSocket.OPEN)
