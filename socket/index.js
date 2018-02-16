@@ -19,7 +19,7 @@ const onConnect = ws => {
       CLIENTS.push(UNAUTHENTICATED_CLIENTS.splice(wsPos, 1))
       ws.sendMessage(MESSAGE.server.acceptAuth)
     } catch (e) {
-      ws.sendMessage(MESSAGE.server.acceptAuth)
+      ws.sendMessage(MESSAGE.server.refuseAuth)
 
     }
 
