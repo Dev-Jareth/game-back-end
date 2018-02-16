@@ -1,7 +1,7 @@
 {
     "client":{
         "requestMessageTypes":"Message-Types",
-        "sendAuth":"Authenticate",
+        "sendAuth":"Authentication",
         "requestPlayerData":"Req-Player-Data",
         "requestPlayerPosition":"Req-Player-Pos"
     },
