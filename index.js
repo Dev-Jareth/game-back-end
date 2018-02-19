@@ -13,6 +13,7 @@ var app = express();
 
 /*###### Move These ######*/
 process.env.MONGO_CONNECTION = "mongodb://root@localhost:27017";
+// process.env.MONGO_CONNECTION = 'mongodb://server:change%20this1@ds127888.mlab.com:27888/game-db';
 process.env.SECRET_KEY = "secrect-key";
 /*########################*/
 
