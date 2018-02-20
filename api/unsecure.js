@@ -1,19 +1,17 @@
 import { Router } from 'express'
 import JWT from 'jsonwebtoken'
-import { getUserFacadeByEmail, validateUser } from '../authenticate'
+import DB from '../data'
 const router = Router();
-router.post('/login', (req, res) => {
-  console.log("We Here")
+router.post('/login', async (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-  validateUser(email, password)
-  console.log("still here")
-  if (validateUser(email, password))
+  console.log("Pre")
+  let user = await DB.login({email, password})
+  console.log("post")
+  if (user)
     res.json({
       success: true,
-      token: JWT.sign(getUserFacadeByEmail(email), process.env.SECRET_KEY, {
-        expiresIn: 3600
-      })
+      token: JWT.sign(JSON.stringify(user), process.env.SECRET_KEY)
     });
   else res.sendStatus(403);
 })

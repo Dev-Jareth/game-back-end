@@ -8,6 +8,7 @@ import http from 'http';
 import { Server } from 'ws'
 import onWsConnect from './socket';
 import api from './api'
+import { connect } from './data'
 
 var app = express();
 
@@ -16,6 +17,8 @@ process.env.MONGO_CONNECTION = "mongodb://root@localhost:27017";
 // process.env.MONGO_CONNECTION = 'mongodb://server:change%20this1@ds127888.mlab.com:27888/game-db';
 process.env.SECRET_KEY = "secrect-key";
 /*########################*/
+
+connect()
 
 //## Setup middleware ##//
 app.use(logger('dev'));
@@ -31,14 +34,14 @@ app.use(cookieParser());
 app.use('/api', api);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -71,7 +74,7 @@ wss.on('connection', onWsConnect)
  */
 server.listen(port);
 server.on('error', onError);
-server.on('listening', () => console.log(`CORS-Enabled NodeJS Server listening on ${'port '+server.address().port||server.address()}`));
+server.on('listening', () => console.log(`CORS-Enabled NodeJS Server listening on ${'port ' + server.address().port || server.address()}`));
 /**
  * Event listener for HTTP server "error" event.
  */

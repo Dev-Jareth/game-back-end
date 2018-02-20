@@ -1,4 +1,5 @@
 import Mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 const schema = new Mongoose.Schema({
     username: { type: String, required: true, unique: true },
@@ -25,4 +26,7 @@ schema.pre('save',function(next){
     if(!this.created_at) this.created_at = date;
     next()
 })
+schema.path('password').set(function (v) {
+  return bcrypt.hashSync(v,10)
+});
 export const User = Mongoose.model('User', schema)
