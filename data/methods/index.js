@@ -6,7 +6,7 @@ const methods = {}
 
 
 methods.addUser = async data => await new User({ ...data }).save().then(() => true)
-methods.getUserById = async id=> User.findById(id).then(console.log)
+methods.getUserById = async id=> User.findById(id)
 methods.login = async data => User.findOne({ email: data.email }).then(await comparePassword(data.password))
 
 export { methods }
