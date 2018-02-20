@@ -1,45 +1,18 @@
-import PubSub from 'pubsub-js';
 import jwt from 'jsonwebtoken';
 import WebSocket from 'ws';
 import MESSAGE from './messageType';
-const UNAUTHENTICATED_CLIENTS = []
-const CLIENTS = []
 
+//## Variables
+const shouldLog = true;
 
-const onConnect = ws => {
-  UNAUTHENTICATED_CLIENTS.push(ws)
-
-  ws.sendMessage = sendMessage.bind(ws);
-  requestAuthentication(ws)
-  subscribe(MESSAGE.client.sendAuth, token => {
-    try {
-      let user = jwt.verify(token, process.env.SECRET_KEY)
-      ws.hasAuth = true;
-      let wsPos = UNAUTHENTICATED_CLIENTS.indexOf(ws)
-      CLIENTS.push(UNAUTHENTICATED_CLIENTS.splice(wsPos, 1))
-      ws.sendMessage(MESSAGE.server.acceptAuth)
-    } catch (e) {
-      ws.sendMessage(MESSAGE.server.refuseAuth)
-
-    }
-
-  })
-  console.log("WS Connected")
-  ws.on('message', handleMessage);
-  ws.on('close', client => {
-    console.log("Closing")
-    if (ws.hasAuth) CLIENTS.splice(CLIENTS.indexOf(ws))
-    else UNAUTHENTICATED_CLIENTS.splice(UNAUTHENTICATED_CLIENTS.indexOf(ws))
-  })
-  ws.on('error', error => {
-    if (error.code !== 'ECONNRESET')
-      console.error("WS ERROR", error)
-  })
-
+//## Functions
+const log = (...msg)=>(!shouldLog)?void(0):console.log(`||WS|| `,...msg)
+const onmessage = function (name, callback) {
+  if (!this.messagelisteners) this.messagelisteners = {};
+  this.messagelisteners[name] = callback;
 }
-export default onConnect;
-const requestAuthentication = ws => ws.sendMessage(MESSAGE.server.requestAuth)
-const sendMessage = function(name, payload = false) {
+const sendmessage = function (name, payload = false) {
+  log(`Sending ${name} message to client`)
   try {
     if (this.readyState === WebSocket.OPEN)
       this.send(JSON.stringify({
@@ -47,21 +20,41 @@ const sendMessage = function(name, payload = false) {
       }))
     else throw new Error(`Not Open (${this.readyState})`)
   } catch (e) {
-    console.error(`WS Failed to send ""${name}"" message because "${e.message}"`)
+    log(`Failed to send ""${name}"" message because "${e.message}"`)
   }
 }
-const handleMessage = message => {
-  console.log("WS Message Received")
+const handlemessage = function (message) {
+  let msg = JSON.parse(message);
+  let type = Object.keys(msg)[0]
+  let payload = msg[type];
+  let handler = this.messagelisteners[type]
+  if (typeof handler === "function") handler(payload)
+}
+
+
+const onConnect = ws => {
+  log("Connected")
+  //## Setup Code
+  ws.onmessage = onmessage.bind(ws)
+  ws.sendmessage = sendmessage.bind(ws)
+  ws.handlemessage = handlemessage.bind(ws)
+  ws.on('message', ws.handlemessage);
+  ws.on('close', () => log("Closing connection"))
+  ws.on('error', error => error.code !== 'ECONNRESET' ? log("ERROR", error) : void (0))
+  //##
+
+  ws.sendmessage(MESSAGE.server.requestAuth)
+  ws.onmessage(MESSAGE.client.sendAuth, validateAuth.bind(ws))
+
+}
+const validateAuth = function(token){
   try {
-    let msg = JSON.parse(message);
-    let type = Object.keys(msg)[0]
-    let payload = msg[type];
-    publish(type, payload)
-    console.log(`WS Parsed Data on ""${type}"" message`)
-  } catch (e) {
-    console.error("WS Failed to parse message")
-  }
+      let user = jwt.verify(token, process.env.SECRET_KEY)
+      this.authorised = true;
+      this.sendmessage(MESSAGE.server.acceptAuth)
+    } catch (e) {
+      this.authorised = false;
+      this.sendmessage(MESSAGE.server.refuseAuth)
+    }
 }
-const publish = PubSub.publish;
-export const subscribe = (key, callback) => PubSub.subscribe(key, (a, b) => callback(b));
-export const unsubscribe = PubSub.unsubscribe;
+export default onConnect;
