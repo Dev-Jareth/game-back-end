@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import WebSocket from 'ws';
 import MESSAGE from './messageType';
+import DB from '../data';
 
 //## Variables
 const shouldLog = true;
@@ -11,7 +12,7 @@ const onmessage = function (name, callback) {
   if (!this.messagelisteners) this.messagelisteners = {};
   this.messagelisteners[name] = callback;
 }
-const sendmessage = function (name, payload = false) {
+const sendMessage = function (name, payload = false) {
   log(`Sending ${name} message to client`)
   try {
     if (this.readyState === WebSocket.OPEN)
@@ -36,25 +37,32 @@ const onConnect = ws => {
   log("Connected")
   //## Setup Code
   ws.onmessage = onmessage.bind(ws)
-  ws.sendmessage = sendmessage.bind(ws)
+  ws.sendMessage = sendMessage.bind(ws)
   ws.handlemessage = handlemessage.bind(ws)
   ws.on('message', ws.handlemessage);
   ws.on('close', () => log("Closing connection"))
   ws.on('error', error => error.code !== 'ECONNRESET' ? log("ERROR", error) : void (0))
   //##
 
-  ws.sendmessage(MESSAGE.server.requestAuth)
+  ws.sendMessage(MESSAGE.server.requestAuth)
   ws.onmessage(MESSAGE.client.sendAuth, validateAuth.bind(ws))
+  ws.onmessage(MESSAGE.client.requestPlayerData, sendPlayerData.bind(ws))
 
 }
 const validateAuth = function(token){
   try {
-      let user = jwt.verify(token, process.env.SECRET_KEY)
-      this.authorised = true;
-      this.sendmessage(MESSAGE.server.acceptAuth)
+      let userId = jwt.verify(token, process.env.SECRET_KEY)
+      this.authorised = {id:userId};
+      this.sendMessage(MESSAGE.server.acceptAuth)
     } catch (e) {
       this.authorised = false;
-      this.sendmessage(MESSAGE.server.refuseAuth)
+      this.sendMessage(MESSAGE.server.refuseAuth)
     }
+}
+const sendPlayerData = async function(){
+  if(!this.authorised) return this.sendMessage(MESSAGE.server.unauthorised);
+  let user = await DB.getUserById(JSON.parse(this.authorised.id))
+  let {password, ...res} = user;
+  this.sendMessage(MESSAGE.server.sendPlayerData,res)
 }
 export default onConnect;

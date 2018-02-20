@@ -1,15 +1,18 @@
 {
     "client":{
-        "requestMessageTypes":"Message-Types",
         "sendAuth":"Authentication",
-        "requestPlayerData":"Req-Player-Data",
-        "requestPlayerPosition":"Req-Player-Pos"
+        "requestPlayerData":"Player-Data",
+        "requestPlayerPos":"Player-Position",
+        "requestPlayerMove":"Request-Player-Move"
     },
     "server":{
-        "sendMessageTypes":"Message-Types",
-        "requestAuth":"Request-Authentication",
         "acceptAuth":"Authenticated",
-        "refuseAuth":"Authentication-Refused"
+        "grantPlayerMove":"Player-Move",
+        "sendPlayerData":"Player-Data",
+        "sendPlayerPos":"Player-Position",
+        "requestAuth":"Request-Authentication",
+        "refuseAuth":"Authentication-Refused",
+        "unauthorised":"Unauthorised"
     },
     "unknown":"Unknown-Message"
 }
