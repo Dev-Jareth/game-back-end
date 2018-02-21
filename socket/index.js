@@ -64,7 +64,9 @@ const sendPlayerData = async function(){
   let user = await DB.getUserById(JSON.parse(this.authorised.id))
   user = JSON.parse(JSON.stringify(user))
   delete user.password
-  log("Sending",user.password,"to client")
+  delete user._id
+  delete user.created_at
+  delete user.updated_at
   this.sendMessage(MESSAGE.server.sendPlayerData,user)
 }
 
