@@ -62,7 +62,10 @@ const validateAuth = function(token){
 const sendPlayerData = async function(){
   if(!this.authorised) return this.sendMessage(MESSAGE.server.unauthorised);
   let user = await DB.getUserById(JSON.parse(this.authorised.id))
-  let {password, ...res} = user;
-  this.sendMessage(MESSAGE.server.sendPlayerData,res)
+  user = JSON.parse(JSON.stringify(user))
+  delete user.password
+  log("Sending",user.password,"to client")
+  this.sendMessage(MESSAGE.server.sendPlayerData,user)
 }
+
 export default onConnect;
