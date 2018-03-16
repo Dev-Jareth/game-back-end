@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { User } from './models';
 import { methods } from './methods';
 
 const handle = (n, m) => e => {
@@ -11,5 +10,6 @@ const handle = (n, m) => e => {
 const tryConn = (n = 0) => async (m = 3) => mongoose.connect(process.env.MONGO_CONNECTION).then(() => console.log("Connected to database at " + process.env.MONGO_CONNECTION)).catch(handle(n, m))
 
 // methods.addUser({ username: "SJ", email: "seraphimjester@gmail.com", password: "hello world", admin: true }).then(console.log).catch()
+// methods.addPlanet({ name: "Earth", radius: 6371, coords: { x: 7000, y: 7000, z: 7000 } }).then(console.log).catch()
 export default methods;
 export const connect = async () => tryConn()()
