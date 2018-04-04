@@ -2,7 +2,7 @@ import Mongoose from 'mongoose';
 
 const schema = new Mongoose.Schema({
   name: { type: String, required: true, unique: true },
-  radius: { type: Number, default: 100, required: true },
+  radius: { type: Number, default: 100, min: 0, required: true },
   classification: { type: String, default: "M" },
   coords: {
     x: { type: Number, default: 0 },
