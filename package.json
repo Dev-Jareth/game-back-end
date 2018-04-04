@@ -4,7 +4,7 @@
   "description": "Backend Server for game",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "nodemon index.js --exec babel-node",
     "start": "node index.js"
   },
@@ -21,6 +21,7 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
+    "jest": "^22.4.3",
     "rimraf": "^2.6.2"
   },
   "dependencies": {
